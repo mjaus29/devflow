@@ -11,11 +11,10 @@ interface Props {
   route: string;
   imgSrc: string;
   placeholder: string;
-  iconPosition: "left" | "right";
   otherClasses?: string;
 }
 
-const LocalSearch = ({ route, imgSrc, placeholder, iconPosition, otherClasses }: Props) => {
+const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,22 +30,20 @@ const LocalSearch = ({ route, imgSrc, placeholder, iconPosition, otherClasses }:
     previousSearchRef.current = search;
 
     const delayDebounceFn = setTimeout(() => {
+      let newUrl = "";
       if (search) {
-        const newUrl = formUrlQuery({
+        newUrl = formUrlQuery({
           params: searchParams.toString(),
           key: "query",
           value: search,
         });
-
-        router.push(newUrl, { scroll: false });
       } else if (pathname === route) {
-        const newUrl = removeKeysFromUrlQuery({
+        newUrl = removeKeysFromUrlQuery({
           params: searchParams.toString(),
           keysToRemove: ["query"],
         });
-
-        router.push(newUrl, { scroll: false });
       }
+      router.push(newUrl, { scroll: false });
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
@@ -56,7 +53,7 @@ const LocalSearch = ({ route, imgSrc, placeholder, iconPosition, otherClasses }:
     <div
       className={`background-light800_darkgradient flex min-h-14 grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
     >
-      {iconPosition === "left" && <Image src={imgSrc} alt="search" width={24} height={24} className="cursor-pointer" />}
+      <Image src={imgSrc} alt="search" width={24} height={24} className="cursor-pointer" />
 
       <Input
         type="text"
@@ -65,10 +62,6 @@ const LocalSearch = ({ route, imgSrc, placeholder, iconPosition, otherClasses }:
         onChange={(e) => setSearch(e.target.value)}
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-hidden"
       />
-
-      {iconPosition === "right" && (
-        <Image src={imgSrc} alt="search" width={15} height={15} className="cursor-pointer" />
-      )}
     </div>
   );
 };
