@@ -1,10 +1,12 @@
 import Link from "next/link";
 
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
-import QuestionCard from "@/components/cards/QuestionCard";
+import { ValidationError } from "@/lib/http-errors";
+import handleError from "@/lib/handlers/errors";
 
 const questions = [
   {
@@ -47,11 +49,24 @@ const questions = [
   },
 ];
 
+const test = async () => {
+  try {
+    throw new ValidationError({
+      title: ["Required"],
+      tags: ['"JavaScript" is not a valid tag.'],
+    });
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
+  await test();
+
   const { query = "", filter = "" } = await searchParams;
 
   const filteredQuestions = questions.filter((question) => {
@@ -65,7 +80,7 @@ const Home = async ({ searchParams }: SearchParams) => {
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
 
-        <Button className="primary-gradient !text-light-900 min-h-[46px] px-4 py-3" asChild>
+        <Button className="primary-gradient text-light-900! min-h-11.5 px-4 py-3" asChild>
           <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
         </Button>
       </section>
