@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
 import User from "@/database/user.model";
-import { NotFoundError } from "@/lib/http-errors";
+import { NotFoundError, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { UserSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
+import z from "zod";
 
 // GET /api/users/[id]
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -49,7 +50,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     await dbConnect();
 
     const body = await request.json();
-    const validatedData = UserSchema.partial().parse(body);
+    const validatedData = UserSchema.partial().safeParse(body);
+
+    if (!validatedData.success) {
+      throw new ValidationError(z.flattenError(validatedData.error).fieldErrors);
+    }
 
     const updatedUser = await User.findByIdAndUpdate(id, validatedData, {
       new: true,

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
 import Account from "@/database/account.model";
-import { ForbiddenError } from "@/lib/http-errors";
+import { ForbiddenError, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { AccountSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
+import z from "zod";
 
 export async function GET() {
   try {
@@ -23,16 +24,20 @@ export async function POST(request: Request) {
     await dbConnect();
     const body = await request.json();
 
-    const validatedData = AccountSchema.parse(body);
+    const validatedData = AccountSchema.safeParse(body);
+
+    if (!validatedData.success) {
+      throw new ValidationError(z.flattenError(validatedData.error).fieldErrors);
+    }
 
     const existingAccount = await Account.findOne({
-      provider: validatedData.provider,
-      providerAccountId: validatedData.providerAccountId,
+      provider: validatedData.data.provider,
+      providerAccountId: validatedData.data.providerAccountId,
     });
 
     if (existingAccount) throw new ForbiddenError("An account with the same provider already exists");
 
-    const newAccount = await Account.create(validatedData);
+    const newAccount = await Account.create(validatedData.data);
 
     return NextResponse.json({ success: true, data: newAccount }, { status: 201 });
   } catch (error) {

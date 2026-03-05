@@ -5,6 +5,7 @@ import { NotFoundError, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { UserSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
+import z from "zod";
 
 export async function POST(request: Request) {
   const { email } = await request.json();
@@ -14,7 +15,9 @@ export async function POST(request: Request) {
 
     const validatedData = UserSchema.partial().safeParse({ email });
 
-    if (!validatedData.success) throw new ValidationError(validatedData.error.flatten().fieldErrors);
+    if (!validatedData.success) {
+      throw new ValidationError(z.flattenError(validatedData.error).fieldErrors);
+    }
 
     const user = await User.findOne({ email });
     if (!user) throw new NotFoundError("User");
