@@ -4,7 +4,7 @@ import User from "@/database/user.model";
 import { NotFoundError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { UserSchema } from "@/lib/validations";
-import handleError from "@/lib/handlers/errors";
+import handleError from "@/lib/handlers/error";
 
 // GET /api/users/[id]
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {

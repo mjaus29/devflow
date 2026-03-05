@@ -6,7 +6,7 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import { ValidationError } from "@/lib/http-errors";
-import handleError from "@/lib/handlers/errors";
+import handleError from "@/lib/handlers/error";
 
 const questions = [
   {
