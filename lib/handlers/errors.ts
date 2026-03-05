@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 
 import { RequestError, ValidationError } from "../http-errors";
 import logger from "../logger";
@@ -31,7 +31,7 @@ const handleError = (error: unknown, responseType: ResponseType = "server") => {
   }
 
   if (error instanceof ZodError) {
-    const validationError = new ValidationError(error.flatten().fieldErrors as Record<string, string[]>);
+    const validationError = new ValidationError(z.flattenError(error).fieldErrors as Record<string, string[]>);
 
     logger.error({ err: error }, `Validation Error: ${validationError.message}`);
 

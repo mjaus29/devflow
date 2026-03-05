@@ -14,7 +14,7 @@ export const SignUpSchema = z.object({
     .string()
     .min(3, "Username must be at least 3 characters long.")
     .max(30, "Username cannot exceed 30 characters.")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores."),
+    .regex(/^\w+$/, "Username can only contain letters, numbers, and underscores."),
 
   name: z
     .string()
@@ -30,8 +30,8 @@ export const SignUpSchema = z.object({
     .max(100, "Password cannot exceed 100 characters.")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character."),
+    .regex(/\d/, "Password must contain at least one number.")
+    .regex(/[^\w]/, "Password must contain at least one special character."),
 });
 
 export const AskQuestionSchema = z.object({
@@ -49,26 +49,26 @@ export const AskQuestionSchema = z.object({
 export const UserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   bio: z.string().optional(),
-  image: z.string().url("Invalid image URL").optional(),
+  image: z.url("Invalid image URL").optional(),
   location: z.string().optional(),
-  portfolio: z.string().url("Invalid portfolio URL").optional(),
+  portfolio: z.url("Invalid portfolio URL").optional(),
   reputation: z.number().optional(),
 });
 
 export const AccountSchema = z.object({
   userId: z.string(),
   name: z.string().min(1, "Name is required"),
-  image: z.string().url("Invalid image URL").optional(),
+  image: z.url("Invalid image URL").optional(),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters long.")
     .max(100, "Password cannot exceed 100 characters.")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[0-9]/, "Password must contain at least one number.")
-    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character.")
+    .regex(/\d/, "Password must contain at least one number.")
+    .regex(/[^\w]/, "Password must contain at least one special character.")
     .optional(),
   provider: z.string().min(1, "Provider is required"),
   providerAccountId: z.string().min(1, "Provider account ID is required"),
@@ -81,7 +81,7 @@ export const SignInWithOAuthSchema = z.object({
     name: z.string().min(1, "Name is required"),
     username: z.string().min(3, "Username must be at least 3 characters"),
     email: z.email("Invalid email address"),
-    image: z.string().url("Invalid image URL").optional(),
+    image: z.url("Invalid image URL").optional(),
   }),
 });
 
@@ -187,7 +187,7 @@ export const CreateInteractionSchema = z.object({
 export const ProfileSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters.").max(130, "Name musn't be longer then 130 characters."),
   username: z.string().min(3, "username musn't be longer then 100 characters."),
-  portfolio: z.string().url("Please provide valid URL"),
+  portfolio: z.url("Please provide valid URL"),
   location: z.string().min(3, "Please provide proper location"),
   bio: z.string().min(3, "Bio must be at least 3 characters."),
 });
@@ -195,7 +195,7 @@ export const ProfileSchema = z.object({
 export const UpdateUserSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters.").max(130, "Name musn't be longer then 130 characters."),
   username: z.string().min(3, "username musn't be longer then 100 characters."),
-  portfolio: z.string().url("Please provide valid URL"),
+  portfolio: z.url("Please provide valid URL"),
   location: z.string().min(3, "Please provide proper location"),
   bio: z.string().min(3, "Bio must be at least 3 characters."),
 });
