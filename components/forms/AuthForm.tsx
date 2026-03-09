@@ -1,4 +1,3 @@
-// /components/forms/AuthForm.tsx
 "use client";
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
@@ -10,25 +9,43 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ROUTES from "@/constants/routes";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
-const AuthForm = <T extends FieldValues>({ schema, defaultValues, formType }: AuthFormProps<T>) => {
+const AuthForm = <T extends FieldValues>({ schema, defaultValues, formType, onSubmit }: AuthFormProps<T>) => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async () => {
-    // TODO: Authenticate User
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    const result = await onSubmit(data);
+
+    if (result?.success) {
+      toast.success("Success", {
+        description: formType === "SIGN_IN" ? "Signed in successfully" : "Signed up successfully",
+      });
+
+      router.push(ROUTES.HOME);
+    } else {
+      toast.error(`Error ${result?.status}`, {
+        description: result?.error?.message,
+      });
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
+  const submittingText = buttonText === "Sign In" ? "Signin In..." : "Signing Up...";
+  const displayButtonText = form.formState.isSubmitting ? submittingText : buttonText;
 
   return (
     <Form {...form}>
@@ -61,7 +78,7 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, formType }: Au
           disabled={form.formState.isSubmitting}
           className="primary-gradient paragraph-medium rounded-2 font-inter text-light-900! min-h-12 w-full px-4 py-3"
         >
-          {form.formState.isSubmitting ? (buttonText === "Sign In" ? "Signin In..." : "Signing Up...") : buttonText}
+          {displayButtonText}
         </Button>
 
         {formType === "SIGN_IN" ? (
