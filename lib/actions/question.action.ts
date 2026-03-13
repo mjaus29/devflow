@@ -57,7 +57,7 @@ export async function createQuestion(params: CreateQuestionParams): Promise<Acti
 
     await session.commitTransaction();
 
-    return { success: true, data: structuredClone(question) };
+    return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -140,7 +140,7 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
     await question.save({ session });
     await session.commitTransaction();
 
-    return { success: true, data: structuredClone(question) };
+    return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -169,7 +169,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
       throw new Error("Question not found");
     }
 
-    return { success: true, data: structuredClone(question) };
+    return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

@@ -8,8 +8,6 @@ import {
   markdownShortcutPlugin,
   MDXEditor,
   type MDXEditorMethods,
-  ConditionalContents,
-  ChangeCodeMirrorLanguage,
   toolbarPlugin,
   UndoRedo,
   Separator,
@@ -41,42 +39,21 @@ interface Props {
   editorRef: ForwardedRef<MDXEditorMethods> | null;
 }
 
-const ChangeCodeMirrorLanguageContents = () => <ChangeCodeMirrorLanguage />;
-
-const ToolbarFallbackContents = () => (
+const ToolbarContents = () => (
   <>
     <UndoRedo />
     <Separator />
-
     <BoldItalicUnderlineToggles />
     <Separator />
-
     <ListsToggle />
     <Separator />
-
     <CreateLink />
     <InsertImage />
     <Separator />
-
     <InsertTable />
     <InsertThematicBreak />
-
     <InsertCodeBlock />
   </>
-);
-
-const ToolbarContents = () => (
-  <ConditionalContents
-    options={[
-      {
-        when: (editor) => editor?.editorType === "codeblock",
-        contents: ChangeCodeMirrorLanguageContents,
-      },
-      {
-        fallback: ToolbarFallbackContents,
-      },
-    ]}
-  />
 );
 
 const Editor = ({ value, editorRef, fieldChange, ...props }: Props) => {
