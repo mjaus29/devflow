@@ -61,3 +61,11 @@
   --basePageBg: black;
   background: var(--basePageBg);
 }
+
+.dark [data-lexical-editor="true"] {
+  color: #f2eff3 !important;
+}
+
+.dark [data-lexical-editor="true"] * {
+  color: inherit !important;
+}
