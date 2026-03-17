@@ -22,6 +22,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
 const AnswerForm = ({ questionId }: { questionId: string }) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -41,6 +42,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
 
       if (result.success) {
         form.reset();
+        setEditorKey((prev) => prev + 1);
 
         toast("Success", {
           description: "Your answer has been posted successfully",
@@ -88,7 +90,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-3">
                 <FormControl className="mt-3.5">
-                  <Editor value={field.value} editorRef={editorRef} fieldChange={field.onChange} />
+                  <Editor key={editorKey} value={field.value} editorRef={editorRef} fieldChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
