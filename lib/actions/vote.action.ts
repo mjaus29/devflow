@@ -2,15 +2,18 @@
 
 import mongoose, { ClientSession } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
-import ROUTES from "@/constants/routes";
-import { Answer, Question, Vote } from "@/database";
+import { Answer, Question } from "@/database";
+import Vote from "@/database/vote.model";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
+import { createInteraction } from "./interaction.action";
+import ROUTES from "@/constants/routes";
 
-export async function updateVoteCount(params: UpdateVoteCountParams, session?: ClientSession): Promise<ActionResponse> {
+async function updateVoteCount(params: UpdateVoteCountParams, session?: ClientSession): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: UpdateVoteCountSchema,
@@ -56,6 +59,13 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
   session.startTransaction();
 
   try {
+    const Model = targetType === "question" ? Question : Answer;
+
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) throw new Error("Content not found");
+
+    const contentAuthorId = contentDoc.author.toString();
+
     const existingVote = await Vote.findOne({
       author: userId,
       actionId: targetId,
@@ -64,17 +74,41 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
 
     if (existingVote) {
       if (existingVote.voteType === voteType) {
-        // If the user has already voted with the same voteType, remove the vote
+        // If user is voting again with the same vote type, remove the vote
         await Vote.deleteOne({ _id: existingVote._id }).session(session);
-        await updateVoteCount({ targetId, targetType, voteType, change: -1 }, session);
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType,
+            change: -1,
+          },
+          session
+        );
       } else {
-        // If the user has already voted with a different voteType, update the vote
+        // If user is changing their vote, update voteType and adjust counts
         await Vote.findByIdAndUpdate(existingVote._id, { voteType }, { new: true, session });
-        await updateVoteCount({ targetId, targetType, voteType: existingVote.voteType, change: -1 }, session);
-        await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType: existingVote.voteType,
+            change: -1,
+          },
+          session
+        );
+        await updateVoteCount(
+          {
+            targetId,
+            targetType,
+            voteType,
+            change: 1,
+          },
+          session
+        );
       }
     } else {
-      // If the user has not voted yet, create a new vote
+      // First-time vote creation
       await Vote.create(
         [
           {
@@ -84,12 +118,28 @@ export async function createVote(params: CreateVoteParams): Promise<ActionRespon
             voteType,
           },
         ],
-        {
-          session,
-        }
+        { session }
       );
-      await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
+      await updateVoteCount(
+        {
+          targetId,
+          targetType,
+          voteType,
+          change: 1,
+        },
+        session
+      );
     }
+
+    // log the interaction
+    after(async () => {
+      await createInteraction({
+        action: voteType,
+        actionId: targetId,
+        actionTarget: targetType,
+        authorId: contentAuthorId,
+      });
+    });
 
     await session.commitTransaction();
     session.endSession();
@@ -125,12 +175,14 @@ export async function hasVoted(params: HasVotedParams): Promise<ActionResponse<H
       actionType: targetType,
     });
 
-    if (!vote) {
+    if (!vote)
       return {
         success: false,
-        data: { hasUpvoted: false, hasDownvoted: false },
+        data: {
+          hasUpvoted: false,
+          hasDownvoted: false,
+        },
       };
-    }
 
     return {
       success: true,
