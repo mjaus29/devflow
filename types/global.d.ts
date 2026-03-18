@@ -60,6 +60,13 @@ interface Answer {
   createdAt: Date;
   upvotes: number;
   downvotes: number;
+  question: string;
+}
+
+interface Collection {
+  _id: string;
+  author: string | Author;
+  question: Question;
 }
 
 interface User {
@@ -72,10 +79,11 @@ interface User {
   location?: string;
   portfolio?: string;
   reputation?: number;
+  createdAt: Date;
 }
 
-interface Collection {
-  _id: string;
-  author: string | Author;
-  question: Question;
+interface BadgeCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
 }
