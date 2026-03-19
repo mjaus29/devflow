@@ -22,6 +22,7 @@ import {
 
 import dbConnect from "../mongoose";
 import { createInteraction } from "./interaction.action";
+import { cache } from "react";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<Question>> {
   const validationResult = await action({
@@ -180,7 +181,9 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
   }
 }
 
-export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<Question>> {
+export const getQuestion = cache(async function getQuestion(
+  params: GetQuestionParams
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
@@ -203,7 +206,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+});
 
 export async function getRecommendedQuestions({ userId, query, skip, limit }: RecommendationParams) {
   const interactions = await Interaction.find({

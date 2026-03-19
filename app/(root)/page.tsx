@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 
 import QuestionCard from "@/components/cards/QuestionCard";
@@ -11,6 +12,12 @@ import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/question.action";
 import Pagination from "@/components/Pagination";
+
+export const metadata: Metadata = {
+  title: "Dev Overflow | Home",
+  description: "Discover different programming questions and answers with recommendations from the community.",
+};
+
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -34,11 +41,20 @@ const Home = async ({ searchParams }: SearchParams) => {
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
 
         <Button className="primary-gradient !text-light-900 min-h-[46px] px-4 py-3" asChild>
-          <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
+          <Link href={ROUTES.ASK_QUESTION} className="max-sm:w-full">
+            Ask a Question
+          </Link>
         </Button>
       </section>
+
       <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-        <LocalSearch route="/" imgSrc="/icons/search.svg" placeholder="Search questions..." otherClasses="flex-1" />
+        <LocalSearch
+          route={ROUTES.HOME}
+          imgSrc="/icons/search.svg"
+          placeholder="Search questions..."
+          iconPosition="left"
+          otherClasses="flex-1"
+        />
 
         <CommonFilter
           filters={HomePageFilters}
@@ -46,6 +62,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           containerClasses="hidden max-md:flex"
         />
       </section>
+
       <HomeFilter />
 
       <DataRenderer
