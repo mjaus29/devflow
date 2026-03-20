@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import { AIAnswerSchema } from "@/lib/validations";
+import z from "zod";
 
 export async function POST(req: Request) {
   const { question, content, userAnswer } = await req.json();
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
     });
 
     if (!validatedData.success) {
-      throw new ValidationError(validatedData.error.flatten().fieldErrors);
+      throw new ValidationError(z.flattenError(validatedData.error).fieldErrors);
     }
 
     const { text } = await generateText({

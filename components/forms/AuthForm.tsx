@@ -2,7 +2,7 @@
 
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
-import { DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form";
+import { DefaultValues, FieldValues, Path, Resolver, SubmitHandler, useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, formType, onSu
   const router = useRouter();
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: standardSchemaResolver(schema),
+    resolver: standardSchemaResolver(schema as unknown as Parameters<typeof standardSchemaResolver>[0]) as Resolver<T>,
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
