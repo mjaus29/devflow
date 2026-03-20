@@ -2,7 +2,7 @@
 
 import { QueryFilter, PipelineStage, Types } from "mongoose";
 
-import { Answer, Question, User } from "@/database";
+import { Answer, Question, User, Account } from "@/database";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -13,6 +13,7 @@ import {
   GetUserSchema,
   GetUserTagsSchema,
   PaginatedSearchParamsSchema,
+  UpdateUserSchema,
 } from "../validations";
 
 export async function getUsers(params: PaginatedSearchParams): Promise<
@@ -308,6 +309,42 @@ export async function getUserStats(params: GetUserParams): Promise<
         totalAnswers: finalAnswerStats.count,
         badges,
       },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function updateUser(params: UpdateUserParams): Promise<ActionResponse<{ user: User }>> {
+  const validationResult = await action({
+    params,
+    schema: UpdateUserSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { user } = validationResult.session!;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(user?.id, params, {
+      new: true,
+    });
+
+    // Update corresponding Account model if name or image is being updated
+    const accountUpdateFields: { name?: string; image?: string } = {};
+    if (params.name) accountUpdateFields.name = params.name;
+    if (params.image) accountUpdateFields.image = params.image;
+
+    if (Object.keys(accountUpdateFields).length > 0) {
+      await Account.findOneAndUpdate({ userId: user?.id }, accountUpdateFields, { new: true });
+    }
+
+    return {
+      success: true,
+      data: { user: JSON.parse(JSON.stringify(updatedUser)) },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
