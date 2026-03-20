@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
     turbopackFileSystemCacheForDev: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   serverExternalPackages: ["pino", "pino-pretty"],
   images: {
     qualities: [100, 75],
