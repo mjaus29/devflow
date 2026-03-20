@@ -79,7 +79,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
             id={_id}
             name={name}
             imageUrl={image}
-            className="size-[140px] rounded-full object-cover"
+            className="size-35 rounded-full object-cover"
             fallbackClassName="text-6xl font-bolder"
           />
 
@@ -118,8 +118,8 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
       />
 
       <section className="mt-10 flex gap-10">
-        <Tabs defaultValue="top-posts" className="flex-[2]">
-          <TabsList className="min-h-[42px] p-1">
+        <Tabs defaultValue="top-posts" className="flex-2">
+          <TabsList className="min-h-10.5 p-1">
             <TabsTrigger value="top-posts" className="tab">
               Top Posts
             </TabsTrigger>
@@ -176,7 +176,7 @@ const ProfilePage = async ({ params, searchParams }: RouteParams) => {
           </TabsContent>
         </Tabs>
 
-        <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
+        <div className="flex w-full min-w-62.5 flex-1 flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
 
           <div className="mt-7 flex flex-col gap-4">

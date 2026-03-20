@@ -8,12 +8,15 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
   const userLocation = await fetchLocation();
 
   const jobs = await fetchJobs({
-    query: `${query}, ${location}` || `Software Engineer in ${userLocation}`,
+    query:
+      query || location
+        ? `${query || ""}, ${location || ""}`.replaceAll(/^,\s*|,\s*$/g, "")
+        : `Software Engineer in ${userLocation}`,
     page: page ?? 1,
   });
 
   const countries = await fetchCountries();
-  const parsedPage = parseInt(page ?? 1);
+  const parsedPage = Number.parseInt(page ?? 1);
 
   return (
     <>

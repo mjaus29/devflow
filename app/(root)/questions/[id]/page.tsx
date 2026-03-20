@@ -84,7 +84,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
               id={author._id}
               name={author.name}
               imageUrl={author.image}
-              className="size-[22px]"
+              className="size-5.5"
               fallbackClassName="text-[10px]"
             />
             <Link href={ROUTES.PROFILE(author._id)}>
@@ -140,7 +140,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
-          <TagCard key={tag._id} _id={tag._id as string} name={tag.name} compact />
+          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
 

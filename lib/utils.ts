@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getDeviconClassName(techName: string) {
-  const normalizedTech = techName.replace(/[ .]/g, "").toLowerCase();
+  const normalizedTech = techName.replaceAll(/[ .]/g, "").toLowerCase();
 
   // Dictionary mapping possible technology names to Devicon class names
   const techMap: { [key: string]: string } = {
@@ -95,7 +95,7 @@ export function getDeviconClassName(techName: string) {
 }
 
 export function getTechDescription(techName: string): string {
-  const normalizedTech = techName.replace(/[ .]/g, "").toLowerCase();
+  const normalizedTech = techName.replaceAll(/[ .]/g, "").toLowerCase();
 
   // Mapping technology names to descriptions
   const techDescriptionMap: { [key: string]: string } = {
@@ -197,12 +197,7 @@ export function processJobTitle(title: string | undefined | null): string {
 
   // Filter out undefined or null and other unwanted words
   const validWords = words.filter((word) => {
-    return (
-      word !== undefined &&
-      word !== null &&
-      word.toLowerCase() !== "undefined" &&
-      word.toLowerCase() !== "null"
-    );
+    return word !== undefined && word !== null && word.toLowerCase() !== "undefined" && word.toLowerCase() !== "null";
   });
 
   // If no valid words are left, return the general title

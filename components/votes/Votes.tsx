@@ -47,10 +47,12 @@ const Votes = ({ upvotes, downvotes, hasVotedPromise, targetId, targetType }: Pa
         });
       }
 
-      const successMessage =
-        voteType === "upvote"
-          ? `Upvote ${!hasUpvoted ? "added" : "removed"} successfully`
-          : `Downvote ${!hasDownvoted ? "added" : "removed"} successfully`;
+      let successMessage: string;
+      if (voteType === "upvote") {
+        successMessage = hasUpvoted ? "Upvote removed successfully" : "Upvote added successfully";
+      } else {
+        successMessage = hasDownvoted ? "Downvote removed successfully" : "Downvote added successfully";
+      }
 
       toast(successMessage, {
         description: "Your vote has been recorded.",
@@ -74,7 +76,9 @@ const Votes = ({ upvotes, downvotes, hasVotedPromise, targetId, targetType }: Pa
           alt="upvote"
           className={`cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Upvote"
-          onClick={() => !isLoading && handleVote("upvote")}
+          onClick={() => {
+            if (!isLoading) handleVote("upvote");
+          }}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
@@ -90,7 +94,9 @@ const Votes = ({ upvotes, downvotes, hasVotedPromise, targetId, targetType }: Pa
           alt="downvote"
           className={`cursor-pointer ${isLoading && "opacity-50"}`}
           aria-label="Downvote"
-          onClick={() => !isLoading && handleVote("downvote")}
+          onClick={() => {
+            if (!isLoading) handleVote("downvote");
+          }}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
