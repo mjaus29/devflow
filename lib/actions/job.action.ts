@@ -1,3 +1,5 @@
+import handleError from "../handlers/error";
+
 export const fetchLocation = async () => {
   const response = await fetch("http://ip-api.com/json/?fields=country");
   const location = await response.json();
@@ -8,15 +10,13 @@ export const fetchCountries = async () => {
   try {
     const response = await fetch("https://restcountries.com/v3.1/all?fields=name");
     const result = await response.json();
-    
+
     // Sort countries alphabetically by their common name
-    const sortedCountries = result.sort((a: Country, b: Country) => 
-      a.name.common.localeCompare(b.name.common)
-    );
-    
+    const sortedCountries = result.sort((a: Country, b: Country) => a.name.common.localeCompare(b.name.common));
+
     return sortedCountries;
   } catch (error) {
-    console.log(error);
+    handleError(error);
     return [];
   }
 };
@@ -29,12 +29,9 @@ export const fetchJobs = async (filters: JobFilterParams) => {
     "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
   };
 
-  const response = await fetch(
-    `https://jsearch.p.rapidapi.com/search?query=${query}&page=${page}`,
-    {
-      headers,
-    }
-  );
+  const response = await fetch(`https://jsearch.p.rapidapi.com/search?query=${query}&page=${page}`, {
+    headers,
+  });
 
   const result = await response.json();
 

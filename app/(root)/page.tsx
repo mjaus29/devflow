@@ -14,7 +14,7 @@ import { getQuestions } from "@/lib/actions/question.action";
 import Pagination from "@/components/Pagination";
 
 export const metadata: Metadata = {
-  title: "Dev Overflow | Home",
+  title: "DevOverflow | Home",
   description: "Discover different programming questions and answers with recommendations from the community.",
 };
 

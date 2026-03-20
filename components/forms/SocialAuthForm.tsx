@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
 import ROUTES from "@/constants/routes";
+import handleError from "@/lib/handlers/error";
 
 const SocialAuthForm = () => {
   const buttonClass =
@@ -15,8 +16,7 @@ const SocialAuthForm = () => {
         redirectTo: ROUTES.HOME,
       });
     } catch (error) {
-      console.log(error);
-
+      handleError(error);
       toast.error("Sign-in Failed", {
         description: error instanceof Error ? error.message : "An error occurred during sign-in.",
         position: "top-center",
