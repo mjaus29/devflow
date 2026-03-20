@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface Props {
-  imgUrl: string;
+  imgUrl?: string;
   alt: string;
   value: string | number;
   title: string;
@@ -17,7 +17,9 @@ interface Props {
 const Metric = ({ imgUrl, alt, value, title, href, textStyles, imgStyles, isAuthor, titleStyles }: Props) => {
   const metricContent = (
     <>
-      <Image src={imgUrl} width={16} height={16} alt={alt} className={`rounded-full object-contain ${imgStyles}`} />
+      {imgUrl && (
+        <Image src={imgUrl} width={16} height={16} alt={alt} className={`rounded-full object-contain ${imgStyles}`} />
+      )}
 
       <p className={`${textStyles} flex items-center gap-1`}>
         {value}

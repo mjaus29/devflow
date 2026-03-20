@@ -11,7 +11,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
             <p className="paragraph-regular text-dark500_light400">To get your questions answered</p>
           </div>
 
-          <Image src="images/site-logo.svg" alt="DevFlow Logo" width={50} height={50} className="object-contain" />
+          <Image src="/images/site-logo.svg" alt="DevFlow Logo" width={50} height={50} className="object-contain" />
         </div>
         {children}
 
